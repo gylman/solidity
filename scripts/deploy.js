@@ -23,7 +23,7 @@ async function main() {
       lockedAmount
     )}ETH and unlock timestamp ${unlockTime} deployed to ${lock.target}`
   ); */
-  const myContract = await hre.ethers.deployContract('HelloWorld');
+  const myContract = await hre.ethers.deployContract('CompanyRegistry');
   await myContract.waitForDeployment();
   console.log('MyContract deployed to:', myContract.target);
 }
