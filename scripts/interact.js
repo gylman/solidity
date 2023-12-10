@@ -1,19 +1,26 @@
+const hre = require('hardhat');
+
 async function main() {
-  const contractAddress = '0x5FbDB2315678afecb367f032d93F642f64180aa3';
-  const Contract = await ethers.getContractFactory('HelloWorld');
+  // Contract related
+  const contractAddress = '0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512';
+  const Contract = await hre.ethers.getContractFactory('CompanyRegistry');
   const contract = await Contract.attach(contractAddress);
+  // Accounts related
+  const [account1, account2, account3] = await hre.ethers.getSigners();
 
-  // Reading the current message
-  const message = await contract.getMessage();
-  console.log('Current Message:', message);
+  const accounts = [account1, account2, account3];
 
-  // Updating the message
-  const tx = await contract.setMessage('New Hello World Message');
-  await tx.wait();
+  // Send transaction from each account
+  accounts.map(async (account, i) => {
+    let tx = await contract
+      .connect(account)
+      .addCompany(`name${i}`, `logo${i}`, true, `token${i}`);
+    await tx.wait();
+    console.log(`Transaction ${i} confirmed`);
+  });
 
-  // Confirming the change
-  const updatedMessage = await contract.getMessage();
-  console.log('Updated Message:', updatedMessage);
+  let total = await contract.totalCompanies();
+  console.log('Total companies:', total);
 }
 
 main()
